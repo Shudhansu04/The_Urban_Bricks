@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import api, { getImageUrl } from "../utils/api";
+import api from "../utils/api";
+import { getImageUrl } from "../utils/imageUrl";
 import "./PropertyDetail.css";
 
 export default function PropertyDetail() {

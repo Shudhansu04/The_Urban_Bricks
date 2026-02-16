@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api, { getImageUrl } from "../utils/api";
+import api from "../utils/api";
+import { getImageUrl } from "../utils/imageUrl";
 import "./Home.css";
 
 export default function Home() {

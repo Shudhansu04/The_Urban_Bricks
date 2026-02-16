@@ -7,11 +7,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://the-urban-bricks.onrender.com',
+        target: 'http://localhost:4000',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'https://the-urban-bricks.onrender.com',
+        target: 'http://localhost:4000',
         changeOrigin: true,
       },
     },

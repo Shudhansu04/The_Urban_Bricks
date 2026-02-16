@@ -15,13 +15,13 @@ export default function SubmitProperty() {
     country: "",
   });
   const [imageFiles, setImageFiles] = useState([]);
-  const [previewUrls, setPreviewUrls] = useState([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const urls = imageFiles.map((f) => URL.createObjectURL(f));
-    setPreviewUrls(urls);
+    setImagePreviewUrls(urls);
     return () => urls.forEach((u) => URL.revokeObjectURL(u));
   }, [imageFiles]);
 
@@ -143,12 +143,14 @@ export default function SubmitProperty() {
               onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
             />
             <small>{imageFiles.length > 0 ? `${imageFiles.length} image(s) selected` : "Upload multiple images"}</small>
-            {previewUrls.length > 0 && (
+            {imageFiles.length > 0 && (
               <div className="image-preview-grid">
-                {previewUrls.map((url, idx) => (
+                {imageFiles.map((file, idx) => (
                   <div key={idx} className="image-preview-item">
-                    <img src={url} alt={imageFiles[idx]?.name} />
-                    <span className="image-preview-name">{imageFiles[idx]?.name}</span>
+                    {imagePreviewUrls[idx] && (
+                      <img src={imagePreviewUrls[idx]} alt={`Preview ${idx + 1}`} />
+                    )}
+                    <span className="image-preview-name">{file.name}</span>
                   </div>
                 ))}
               </div>

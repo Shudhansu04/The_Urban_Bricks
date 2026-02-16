@@ -1,13 +1,7 @@
 import { prisma } from "../config/prisma.js";
-import { env } from "../config/env.js";
 import { z } from "zod";
 import { notifyAdminOnNewListing } from "../services/notification.js";
-import { isCloudinaryConfigured, uploadFilesToCloudinary } from "../services/cloudinary.js";
-
-function getUploadBaseUrl(req) {
-  if (env.apiBaseUrl) return env.apiBaseUrl.replace(/\/$/, "");
-  return `${req.protocol}://${req.get("host")}`;
-}
+import { uploadMultipleToCloudinary, isConfigured } from "../utils/cloudinary.js";
 
 const createSchema = z.object({
   body: z.object({
@@ -55,18 +49,14 @@ export const createProperty = async (req, res) => {
   try {
     const data = req.validated.body;
     let uploadedUrls = [];
-
-    if (req.files?.length > 0) {
-      if (isCloudinaryConfigured()) {
-        uploadedUrls = await uploadFilesToCloudinary(req.files, "properties");
-      } else {
-        const baseUrl = getUploadBaseUrl(req);
-        uploadedUrls = req.files.map((file) =>
-          `${baseUrl}/uploads/properties/${file.filename}`
-        );
+    if (req.files && req.files.length > 0) {
+      if (!isConfigured) {
+        return res.status(503).json({
+          error: "Image upload is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in server .env",
+        });
       }
+      uploadedUrls = await uploadMultipleToCloudinary(req.files, "properties");
     }
-
     const mediaUrls = [...(data.mediaUrls || []), ...uploadedUrls];
     const property = await prisma.property.create({
       data: {

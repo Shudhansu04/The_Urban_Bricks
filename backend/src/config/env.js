@@ -18,7 +18,7 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET || "change_me",
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
-  apiBaseUrl: process.env.API_BASE_URL || null,
+  apiBaseUrl: process.env.API_BASE_URL || "",
   // Nodemailer SMTP configuration
   smtpHost: process.env.SMTP_HOST || "",
   smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
@@ -32,7 +32,7 @@ export const env = {
   twilioToken: process.env.TWILIO_AUTH_TOKEN || "",
   twilioWhatsappFrom: process.env.TWILIO_WHATSAPP_FROM || "",
   adminWhatsappTo: process.env.ADMIN_WHATSAPP_TO || "",
-  // Cloudinary (optional - for production image storage)
+  // Cloudinary
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || "",
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || "",
