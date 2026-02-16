@@ -17,8 +17,8 @@ export const env = {
   port: process.env.PORT ? Number(process.env.PORT) : 4000,
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET || "change_me",
-  frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
-  apiBaseUrl: process.env.API_BASE_URL || "",
+  frontendUrl: process.env.FRONTEND_URL || (process.env.NODE_ENV === "production" ? "https://the-urban-bricks1.vercel.app" : "http://localhost:5173"),
+  apiBaseUrl: process.env.API_BASE_URL || (process.env.NODE_ENV === "production" ? "https://the-urban-bricks-1.onrender.com" : ""),
   // Nodemailer SMTP configuration
   smtpHost: process.env.SMTP_HOST || "",
   smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
