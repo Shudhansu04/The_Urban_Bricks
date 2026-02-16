@@ -11,7 +11,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'https://the-urban-bricks.onrender.com/uploads',
+        target: 'https://the-urban-bricks.onrender.com',
         changeOrigin: true,
       },
     },
