@@ -1,0 +1,74 @@
+.profile-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-card {
+  background: rgba(218, 240, 238, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(86, 85, 85, 0.9);
+  padding: 2.5rem;
+}
+
+.profile-card h1 {
+  margin-bottom: 1.5rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  padding: 0.7rem 0.8rem;
+  border: 2px solid rgba(61, 60, 60, 0.9);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
+}
+
+.password-section {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  padding: 1.5rem;
+  border: 1px solid rgba(72, 71, 71, 0.8);
+}
+
+.password-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 640px) {
+  .profile-card {
+    padding: 2rem 1.5rem;
+  }
+}
