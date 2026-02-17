@@ -19,11 +19,29 @@ import testRoutes from "./routes/test.js";
 
 const app = express();
 
-app.use(helmet());
+const allowedOrigins = [
+  "https://the-urban-bricks1.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    origin: env.frontendUrl,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin || allowedOrigins[0]);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 app.use(express.json());
