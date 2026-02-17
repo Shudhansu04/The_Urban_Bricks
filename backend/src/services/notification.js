@@ -14,8 +14,9 @@ if (env.smtpHost && env.smtpUser && env.smtpPassword) {
       user: env.smtpUser,
       pass: env.smtpPassword,
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
+    connectionTimeout: 30000, // 30s - cloud providers can be slow to reach SMTP
+    greetingTimeout: 30000,
+    socketTimeout: 60000, // 60s for slow networks
   });
   console.log("[notification] Nodemailer transporter initialized (host:", env.smtpHost + ")");
 } else {
