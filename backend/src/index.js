@@ -55,8 +55,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-const authRateLimit =
-  process.env.NODE_ENV === "production" ? rateLimit(10, 15 * 60 * 1000) : rateLimit(200, 5 * 60 * 1000);
+const authRateLimit = rateLimit(env.rateLimitMax, env.rateLimitWindowMs);
 app.use("/api/auth", authRateLimit, authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/inquiries", inquiryRoutes);
