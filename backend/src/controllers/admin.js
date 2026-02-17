@@ -132,13 +132,14 @@ export const testNotificationConfig = async (req, res) => {
     const { env } = await import("../config/env.js");
     const config = {
       email: {
+        resendApiKeySet: !!env.resendApiKey,
         smtpHost: env.smtpHost || "Not set",
         smtpPort: env.smtpPort,
         smtpUser: env.smtpUser ? `${env.smtpUser.substring(0, 5)}...` : "Not set",
         smtpPasswordSet: !!env.smtpPassword,
         emailFrom: env.emailFrom || "Not set",
         adminEmail: env.adminEmail || "Not set",
-        emailReady: !!(env.smtpHost && env.smtpUser && env.smtpPassword && env.emailFrom && env.adminEmail),
+        emailReady: !!(env.resendApiKey || (env.smtpHost && env.smtpUser && env.smtpPassword)) && env.emailFrom && env.adminEmail,
       },
       twilio: {
         accountSid: env.twilioSid ? `${env.twilioSid.substring(0, 10)}...` : "Not set",

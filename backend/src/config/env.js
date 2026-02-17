@@ -25,8 +25,10 @@ export const env = {
   smtpSecure: process.env.SMTP_SECURE === "true",
   smtpUser: process.env.SMTP_USER || "",
   smtpPassword: process.env.SMTP_PASSWORD || "",
-  emailFrom: process.env.EMAIL_FROM || "",
+  emailFrom: process.env.EMAIL_FROM || "onboarding@resend.dev",
   adminEmail: process.env.ADMIN_EMAIL || "",
+  // Resend (API-based, works on Render - use instead of SMTP when SMTP times out)
+  resendApiKey: process.env.RESEND_API_KEY || "",
   // Twilio WhatsApp configuration
   twilioSid: process.env.TWILIO_ACCOUNT_SID || "",
   twilioToken: process.env.TWILIO_AUTH_TOKEN || "",

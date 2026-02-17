@@ -71,6 +71,6 @@ const PORT = env.port;
 app.listen(PORT, () => {
   console.log(`[server] Listening on port ${PORT}`);
   console.log("Database Connected");
-  const emailOk = !!(env.smtpHost && env.smtpUser && env.smtpPassword && env.emailFrom && env.adminEmail);
-  console.log("[server] Email notifications:", emailOk ? "Configured" : "NOT CONFIGURED (set SMTP_* and ADMIN_EMAIL on Render)");
+  const emailOk = !!(env.resendApiKey || (env.smtpHost && env.smtpUser && env.smtpPassword)) && env.adminEmail;
+  console.log("[server] Email notifications:", emailOk ? "Configured (Resend or SMTP)" : "NOT CONFIGURED (set RESEND_API_KEY or SMTP_* + ADMIN_EMAIL on Render)");
 });

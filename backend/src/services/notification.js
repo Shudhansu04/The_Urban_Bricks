@@ -1,11 +1,19 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import twilio from "twilio";
 import { env } from "../config/env.js";
 import { prisma } from "../config/prisma.js";
 
-// Initialize Nodemailer transporter
+// Resend (HTTP API - works on Render when SMTP is blocked)
+let resendClient = null;
+if (env.resendApiKey) {
+  resendClient = new Resend(env.resendApiKey);
+  console.log("[notification] Resend client initialized (API-based, no SMTP)");
+}
+
+// Initialize Nodemailer transporter (fallback for local dev)
 let emailTransporter = null;
-if (env.smtpHost && env.smtpUser && env.smtpPassword) {
+if (!resendClient && env.smtpHost && env.smtpUser && env.smtpPassword) {
   emailTransporter = nodemailer.createTransport({
     host: env.smtpHost,
     port: env.smtpPort,
@@ -62,32 +70,41 @@ async function logNotification(propertyId, channel, status, detail = null) {
   }
 }
 
-// Helper function to send email using Nodemailer
+// Helper function to send email (Resend preferred, Nodemailer fallback)
 async function sendEmail(to, subject, html) {
-  if (!emailTransporter) {
-    throw new Error("Email transporter not configured. Check SMTP settings.");
-  }
-  if (!env.emailFrom) {
-    throw new Error("EMAIL_FROM is not set");
+  const from = env.emailFrom || "onboarding@resend.dev";
+
+  if (resendClient) {
+    const { data, error } = await resendClient.emails.send({
+      from,
+      to,
+      subject,
+      html,
+    });
+    if (error) throw new Error(error.message);
+    return { messageId: data?.id };
   }
 
-  const mailOptions = {
-    from: env.emailFrom,
-    to,
-    subject,
-    html,
-  };
+  if (emailTransporter) {
+    const info = await emailTransporter.sendMail({
+      from,
+      to,
+      subject,
+      html,
+    });
+    return info;
+  }
 
-  const info = await emailTransporter.sendMail(mailOptions);
-  return info;
+  throw new Error("Email not configured. Set RESEND_API_KEY (recommended) or SMTP_* in Render Environment.");
 }
 
 export async function sendEmailNotification(property) {
+  const emailReady = !!(resendClient || emailTransporter) && !!env.adminEmail;
   console.log("[notification] Attempting to send email notification");
-  console.log("[notification] Config check - SMTP configured:", !!emailTransporter, "Admin Email:", env.adminEmail);
+  console.log("[notification] Config - Resend:", !!resendClient, "SMTP:", !!emailTransporter, "Admin Email:", env.adminEmail);
   
-  if (!emailTransporter || !env.adminEmail) {
-    const reason = !emailTransporter ? "Missing SMTP configuration" : "Missing ADMIN_EMAIL";
+  if (!emailReady) {
+    const reason = !(resendClient || emailTransporter) ? "Missing RESEND_API_KEY or SMTP config" : "Missing ADMIN_EMAIL";
     console.warn(`[notification] Email not configured - ${reason}`);
     await logNotification(property.id, "email", "skipped", reason);
     return;
@@ -284,8 +301,8 @@ export async function notifyAdminOnNewListing(property) {
 
 // New user registration notifications
 export async function sendUserRegistrationEmail(user) {
-  if (!emailTransporter || !env.adminEmail) {
-    console.warn("[notification] Email not configured for user registration - SMTP:", !!emailTransporter, "Admin Email:", !!env.adminEmail);
+  if (!(resendClient || emailTransporter) || !env.adminEmail) {
+    console.warn("[notification] Email not configured for user registration - Resend/SMTP:", !!(resendClient || emailTransporter), "Admin Email:", !!env.adminEmail);
     await logNotification(null, "email", "skipped", "Email not configured", user.id);
     return;
   }
@@ -401,7 +418,7 @@ export async function notifyAdminOnNewUser(user) {
 }
 
 export async function sendPasswordResetEmail(user, resetLink) {
-  if (!emailTransporter || !user?.email) {
+  if (!(resendClient || emailTransporter) || !user?.email) {
     throw new Error("Email transporter not configured or user email missing");
   }
 
@@ -430,8 +447,8 @@ export async function sendInquiryEmailToOwner(inquiry, property, buyer) {
   console.log("[notification] Attempting to send inquiry email to owner");
   console.log("[notification] Owner email:", property.owner.email);
   
-  if (!emailTransporter || !property.owner.email) {
-    const reason = !emailTransporter ? "Missing SMTP configuration" : "Owner email not found";
+  if (!(resendClient || emailTransporter) || !property.owner.email) {
+    const reason = !(resendClient || emailTransporter) ? "Missing Resend/SMTP configuration" : "Owner email not found";
     console.warn(`[notification] Email not configured for inquiry - ${reason}`);
     await logNotification(property.id, "email", "skipped", `Inquiry notification: ${reason}`, property.owner.id);
     return;
@@ -568,8 +585,8 @@ export async function notifyOwnerOnInquiry(inquiry, property, buyer) {
 export async function sendInquiryEmailToAdmin(inquiry, property, buyer) {
   console.log("[notification] Attempting to send inquiry email to admin");
   
-  if (!emailTransporter || !env.adminEmail) {
-    const reason = !emailTransporter ? "Missing SMTP configuration" : "Missing ADMIN_EMAIL";
+  if (!(resendClient || emailTransporter) || !env.adminEmail) {
+    const reason = !(resendClient || emailTransporter) ? "Missing Resend/SMTP configuration" : "Missing ADMIN_EMAIL";
     console.warn(`[notification] Email not configured for inquiry admin notification - ${reason}`);
     await logNotification(property.id, "email", "skipped", `Admin inquiry notification: ${reason}`);
     return;
@@ -702,8 +719,8 @@ export async function notifyAdminOnInquiry(inquiry, property, buyer) {
 }
 
 export async function sendLeadEmailToAdmin(lead, property) {
-  if (!emailTransporter || !env.adminEmail) {
-    const reason = !emailTransporter ? "Missing SMTP configuration" : "Missing ADMIN_EMAIL";
+  if (!(resendClient || emailTransporter) || !env.adminEmail) {
+    const reason = !(resendClient || emailTransporter) ? "Missing Resend/SMTP configuration" : "Missing ADMIN_EMAIL";
     console.warn(`[notification] Email not configured for lead admin notification - ${reason}`);
     await logNotification(property.id, "email", "skipped", `Lead admin notification: ${reason}`);
     return;
