@@ -9,15 +9,21 @@ if (env.smtpHost && env.smtpUser && env.smtpPassword) {
   emailTransporter = nodemailer.createTransport({
     host: env.smtpHost,
     port: env.smtpPort,
-    secure: env.smtpSecure, // true for 465, false for other ports
+    secure: env.smtpSecure, // true for 465, false for other ports (587 uses STARTTLS)
     auth: {
       user: env.smtpUser,
       pass: env.smtpPassword,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
   });
-  console.log("[notification] Nodemailer transporter initialized");
+  console.log("[notification] Nodemailer transporter initialized (host:", env.smtpHost + ")");
 } else {
-  console.warn("[notification] Nodemailer not configured - missing SMTP credentials");
+  const missing = [];
+  if (!env.smtpHost) missing.push("SMTP_HOST");
+  if (!env.smtpUser) missing.push("SMTP_USER");
+  if (!env.smtpPassword) missing.push("SMTP_PASSWORD");
+  console.warn("[notification] Nodemailer not configured - missing:", missing.join(", "));
 }
 
 // Initialize Twilio client
