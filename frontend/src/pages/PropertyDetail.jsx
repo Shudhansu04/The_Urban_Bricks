@@ -187,9 +187,13 @@ export default function PropertyDetail() {
                 />
                 <input
                   type="tel"
-                  placeholder="Phone"
+                  placeholder="Phone (10 digits required)"
                   value={leadForm.phone}
-                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
+                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value.replace(/\D/g, "") })}
+                  minLength={10}
+                  maxLength={10}
+                  pattern="[0-9]{10}"
+                  title="10 digits required"
                   required
                 />
               </div>

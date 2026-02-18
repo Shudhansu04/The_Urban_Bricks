@@ -10,7 +10,7 @@ const signupSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(100),
     email: z.string().email(),
-    phone: z.string().min(6).max(20),
+    phone: z.string().regex(/^\d{10}$/, "Phone must be exactly 10 digits"),
     location: z.string().min(2).max(200),
     password: z.string().min(6),
   }),
@@ -40,7 +40,7 @@ const updateProfileSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(100).optional(),
     email: z.string().email().optional(),
-    phone: z.string().min(6).max(20).optional(),
+    phone: z.union([z.string().regex(/^\d{10}$/), z.literal("")]).optional(),
     location: z.string().min(2).max(200).optional(),
     currentPassword: z.string().min(6).optional(),
     newPassword: z.string().min(6).optional(),

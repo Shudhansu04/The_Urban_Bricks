@@ -8,7 +8,7 @@ const createLeadSchema = z.object({
     type: z.enum(["BUY", "RENT"]),
     name: z.string().min(2).max(100),
     email: z.string().email(),
-    phone: z.string().min(6).max(20),
+    phone: z.string().regex(/^\d{10}$/, "Phone must be exactly 10 digits"),
     message: z.string().max(1000).optional(),
   }),
 });

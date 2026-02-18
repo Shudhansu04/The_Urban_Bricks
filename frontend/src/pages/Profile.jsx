@@ -117,8 +117,13 @@ export default function Profile() {
               <label>Phone</label>
               <input
                 type="tel"
+                placeholder="10 digits required"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })}
+                minLength={10}
+                maxLength={10}
+                pattern="[0-9]{10}"
+                title="10 digits required"
                 required
               />
             </div>
