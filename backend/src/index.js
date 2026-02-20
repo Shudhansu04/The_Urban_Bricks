@@ -19,33 +19,40 @@ import testRoutes from "./routes/test.js";
 
 const app = express();
 
-const allowedOrigins = [
+const defaultAllowedOrigins = [
   "https://theurbanbricks.com",
   "https://www.theurbanbricks.com",
   "https://the-urban-bricks1.vercel.app",
+  env.frontendUrl,
   "http://localhost:5173",
 ];
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...env.corsOrigins])].filter(Boolean);
+const vercelPreviewPattern = /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
 
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests without Origin (server-to-server, health checks, curl, Postman).
+      if (!origin) {
+        return callback(null, true);
+      }
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, origin || allowedOrigins[0]);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      if (env.allowVercelPreview && vercelPreviewPattern.test(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,

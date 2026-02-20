@@ -18,6 +18,11 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET || "change_me",
   frontendUrl: process.env.FRONTEND_URL || (process.env.NODE_ENV === "production" ? "https://the-urban-bricks1.vercel.app" : "http://localhost:5173"),
+  corsOrigins: (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+  allowVercelPreview: process.env.ALLOW_VERCEL_PREVIEW === "true",
   apiBaseUrl: process.env.API_BASE_URL || (process.env.NODE_ENV === "production" ? "https://the-urban-bricks-1.onrender.com" : ""),
   // Nodemailer SMTP configuration
   smtpHost: process.env.SMTP_HOST || "",
