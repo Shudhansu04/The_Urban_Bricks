@@ -21,24 +21,31 @@ const app = express();
 
 const allowedOrigins = [
   "https://theurbanbricks.com",
+  "https://www.theurbanbricks.com",
   "https://the-urban-bricks1.vercel.app",
   "http://localhost:5173",
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, origin || allowedOrigins[0]);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
+
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, origin || allowedOrigins[0]);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
@@ -50,7 +57,7 @@ app.use(cookieParser());
 app.use(morgan("combined"));
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-app.use(authenticate);
+
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
@@ -58,6 +65,7 @@ app.get("/health", (req, res) => {
 
 const authRateLimit = rateLimit(env.rateLimitMax, env.rateLimitWindowMs);
 app.use("/api/auth", authRateLimit, authRoutes);
+app.use(authenticate);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/inquiries", inquiryRoutes);
 app.use("/api/admin", adminRoutes);
