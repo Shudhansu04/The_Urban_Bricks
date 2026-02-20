@@ -20,6 +20,7 @@ import testRoutes from "./routes/test.js";
 const app = express();
 
 const allowedOrigins = [
+  "https://theurbanbricks.com",
   "https://the-urban-bricks1.vercel.app",
   "http://localhost:5173",
 ];
