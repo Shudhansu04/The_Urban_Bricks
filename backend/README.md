@@ -1,6 +1,6 @@
 # Backend API
 
-Express.js REST API for Property Marketplace.
+Express.js REST API for The Urban Bricks.
 
 ## Setup
 

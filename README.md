@@ -1,6 +1,10 @@
 # Property Selling Website
 
-A full-stack property marketplace application built with MERN stack (MongoDB/PostgreSQL, Express, React, Node.js).
+A full-stack The Urban Bricks application built with MERN stack (MongoDB/PostgreSQL, Express, React, Node.js).
+
+## Live Link
+
+🔗 **[The Urban Bricks](https://www.theurbanbricks.com)** — [https://www.theurbanbricks.com](https://www.theurbanbricks.com)
 
 ## Features
 
@@ -18,7 +22,7 @@ A full-stack property marketplace application built with MERN stack (MongoDB/Pos
 - Node.js + Express
 - MongoDB with Prisma ORM
 - JWT authentication (httpOnly cookies)
-- SendGrid for email notifications
+- Resend for email notifications
 - Twilio for WhatsApp notifications
 - Zod for validation
 - Helmet, CORS for security
@@ -63,7 +67,7 @@ Property_Selling Website/
 ### Prerequisites
 - Node.js (v18+)
 - MongoDB database (local or MongoDB Atlas)
-- SendGrid account (for email)
+- Resend account (for email)
 - Twilio account (for WhatsApp)
 
 ### Backend Setup
